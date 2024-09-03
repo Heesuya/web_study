@@ -1,0 +1,153 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+@font-face {
+  font-family: gd_r;
+  src: url(./Gowun_Dodum/GowunDodum-Regular.ttf);
+}
+@font-face {
+  font-family: ns_r;
+  src: url(./Noto_Sans_KR/static/NotoSansKR-Regular.ttf);
+}
+@font-face {
+  font-family: ns_b;
+  src: url(./Noto_Sans_KR/static/NotoSansKR-Bold.ttf);
+}
+@font-face {
+  font-family: ns_black;
+  src: url(./Noto_Sans_KR/static/NotoSansKR-Black.ttf);
+}
+:root {
+  --maincolor: #e2ebef;
+  --pointcolor: #d0dae0;
+  --sub1: #1a1f1f;
+}
+html,
+body {
+  height: 100%; /* 전체 페이지의 높이를 100%로 설정 */
+  margin: 0; /* 기본 여백 제거 */
+}
+
+body {
+  display: flex;
+  flex-direction: column; /* 수직 방향으로 배치 */
+}
+* {
+font-size: 13px;
+}
+
+.header {
+  background-color: var(--maincolor);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px; /* header 내부의 여백 */
+}
+
+.header > div {
+  width: 1200px;
+  display: flex;
+  justify-content: space-between; /* 내부 div들을 좌우로 배치 */
+  align-items: center;
+  margin: 0 auto;
+}
+
+* a {
+  text-decoration: none;
+  color: var(--suv1);
+}
+* a:hover {
+  text-decoration: underline;
+  color: #2ba4f0;
+}
+
+.user-menu {
+  display: flex;
+}
+
+.nav ul,
+.user-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav li,
+.user-menu li {
+  margin-right: 10px; /* 항목 사이의 간격 */
+}
+
+.logo {
+  flex: 2;
+  text-align: center;
+}
+
+.user-menu {
+  flex: 1;
+  text-align: right;
+}
+
+.user-menu a {
+  margin-left: 10px; /* 메뉴 항목 사이의 간격 */
+}
+
+.section {
+  flex: 1; /* 남은 공간을 채우도록 설정 */
+  width: 1200px;
+  margin: 0 auto;
+   align-items: center;
+  
+}
+
+.footer {
+  background-color: var(--pointcolor);
+  padding: 20px; /* footer 내부의 여백 */
+  margin: 0 auto;
+  width: 100%;
+}
+
+.footer > div {
+  width: 1200px;
+  justify-content: space-between; /* 좌우로 배치 */
+  align-items: center; /* 수직 정렬 */
+  margin: 0 auto;
+}
+
+.footer > div > ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer > div > ul li {
+  margin-right: 10px; /* 항목 사이의 간격 */
+}
+
+.footer > div > p {
+  margin: 0; /* 패딩 및 여백 초기화 */
+}
+
+.submit-btn {
+    background-color: var(--pointcolor);
+    height: 30px;
+    width: 100px;
+    border: none;
+    border-radius: 15px;
+}
+
+.check-btn {
+    width: 50px;
+    height :15px;
+    background-color: var(--pointcolor);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.check-btn:hover {
+    background-color: #0056b3;
+}

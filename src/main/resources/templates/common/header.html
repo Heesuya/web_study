@@ -4,50 +4,35 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
 	rel="stylesheet">
 <!-- jquery -->
-<script src="/js/jquery-3.6.0.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- 기본 css -->
+<link rel="stylesheet" href="/css/default.css" />
+<!-- 기본 js -->
 <script src="/js/sweetalert.min.js"></script>
-<style>
-.header {
-	background-color: gray;
-	padding: 20px;
-}
-
-.header>div {
-	width: 1200px;
-	margin: 0 auto;
-	display: flex;
-	gap: 50px;
-}
-.nav > ul{
- list-style-type: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  }
-</style>
-<header class="header">
-	<div>
-		<nav class="nav">
-			<ul>
-				<li><a href="#">자유게시판</a></li>
-			</ul>
-		</nav>
-		<div class="logo">
-			<a href="/">table</a>
-		</div>
-		<ul class="user-menu">
-			<th:block th:if="${session.member == null}">
-				<li><a href="/member/loginFrm">로그인</a></li>
-				<li><a href="/member/joinFrm">회원가입</a></li>
-			</th:block>
-			<th:block th:if="${session.member != null}">
-				<li><a href="/member/mypage2"
-					th:text="${session.member.memberName}"></a></li>
+ 
+ <header class="header">
+      <div>
+        <div class="nav">
+          <ul>
+            <li>메뉴</li>
+            <li><a href="#">자유게시판</a></li>
+          </ul>
+        </div>
+        <div class="logo">
+          <a href="/">table</a>
+        </div>
+        <div>
+          <ul class="user-menu">
+          	<th:block th:if="${session.member == null}">
+          	    <li><a href="/member/loginFrm">로그인</a></li>
+            	<li><a href="/member/joinFrm">회원가입</a></li>
+            </th:block>
+            <th:block th:if="${session.member != null}">
+				<li><a href="/member/mypage" th:text="${session.member.memberName}"></a></li>
 				<li><a href="/member/logout">로그아웃</a></li>
 			</th:block>
-		</ul>
-	</div>
-</header>
+          </ul>
+        </div>
+      </div>
+    </header>
 </html>

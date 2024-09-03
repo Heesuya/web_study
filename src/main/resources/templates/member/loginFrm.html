@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>로그인</title>
+<style>
+/* 기본 스타일 */
+.login-wrap {
+    border: 1px solid black;
+    width: 90%;
+    max-width: 500px; /* 최대 너비를 설정하여 큰 화면에서도 적절한 크기 유지 */
+    height: auto; /* 높이를 자동으로 조정 */
+    margin: 200px auto; /* 화면 중앙 정렬 */
+    padding: 20px; /* 내부 여백 추가 */
+    box-sizing: border-box; /* 패딩 및 테두리 크기를 포함 */
+    background-color: #fff; /* 배경색 추가 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+
+.login-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.input-wrap {
+    margin-bottom: 15px; /* 입력 필드 사이 여백 추가 */
+    text-align: center;
+}
+
+.input-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px; /* 라벨과 입력 필드 사이 여백 추가 */
+    text-align: left;
+    margin-left: 50px;
+}
+
+.input-item input {
+    width: 80%;
+    padding: 10px; /* 입력 필드 내부 여백 추가 */
+    border: 1px solid #ddd;
+    border-radius: 4px; /* 입력 필드 모서리 둥글게 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함 */
+}
+
+.login-button-box {
+    text-align: center; /* 버튼을 중앙 정렬 */
+    margin-top: 20px; /* 버튼과 입력 필드 사이 여백 추가 */
+}
+
+
+
+.member-link-box {
+    text-align: center; /* 링크를 중앙 정렬 */
+    margin-top: 20px; /* 버튼과 링크 사이 여백 추가 */
+}
+
+.member-link-box a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    margin: 0 10px; /* 링크 사이 여백 추가 */
+}
+
+.member-link-box a:hover {
+    text-decoration: underline; /* 링크 호버 시 밑줄 추가 */
+}
+
+
+@media (max-width: 600px) {
+    .login-wrap {
+        width: 95%;
+        padding: 15px; /* 모바일에서 여백 조정 */
+        margin: 20px;
+    }
+
+    .login-title {
+        font-size: 20px; /* 모바일에서 제목 폰트 크기 조정 */
+    }
+
+    .submit-btn {
+        width: 100%; /* 버튼을 모바일 화면에 맞게 넓게 조정 */
+    }
+}
+
+</style>
+</head>
+<body>
+    <th:block th:include="common/header"></th:block>
+   	<section class="section login">
+   		<div class="login-wrap">
+   		<div class="login-title">로그인</div>
+   			<form action="/member/login" method="post" autocomplete="off">
+   				<div class="input-wrap">
+   					<div class="input-title">
+   						<label for="memberId">아이디</label>
+   					</div>
+   					<div class="input-item">
+   						<input type="text" name="memberId" id="memberId"> 
+   					</div>
+   				</div>
+   				<div class="input-wrap">
+   					<div class="input-title">
+   						<label for="memberPw">비밀번호</label>
+   					</div>
+   					<div class="input-item">
+   						<input type="password" name="memberPw" id="memberPw"> 
+   					</div>
+   				</div>   	
+   				<div class="login-button-box">
+					<button type="submit" class="submit-btn" onclick="return checkValue();">로그인</button>
+				</div>
+				<div class="member-link-box">
+					<a href="/member/joinFrm">회원가입</a> | 
+					<a href="/member/searchIdFrm">아이디찾기</a> | 
+					<a href="/member/searchPwFrm">비밀번호 찾기</a>
+				</div>						
+   			</form>
+
+   		</div>
+   	</section>
+   	<script>
+   	function checkValue(){
+   		const memberId = $("#memberId").val();
+   		const memberPw = $("#memberPw").val();
+   		if(memberId === "" || memberPw === ""){
+	   		swal({
+                title:"입력값 확인",
+                text : "입력값을 확인해주세요.",
+                icon : "warning"
+		   		});
+	   		return false;
+   		}
+   	}
+   
+   	
+   	</script>
+    <th:block th:include="common/footer"></th:block>
+</body>
+</html>

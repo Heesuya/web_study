@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>아이디 찾기</title>
+<style>
+
+
+    .search-wrap {
+    	margin: 100px auto;
+        width: 400px;
+        height : 70%;
+        padding: 30px;
+        border: 1px solid black;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 */
+        gap: 20px; /* 입력 필드 사이 간격 */
+        box-sizing: border-box;
+    }
+    @media (max-width: 500px) {
+    .search-wrap {
+        margin: 20px; /* 모바일에서의 여백 조정 */
+    }
+}
+
+
+    .input-wrap {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+
+    .input-wrap input {
+        width: 68%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+        font-size: 16px;
+        transition: border-color 0.3s; 
+    }
+
+    .input-wrap input:focus {
+        border-color: #007bff; /* 포커스 시 테두리 색상 */
+        outline: none; /* 기본 테두리 제거 */
+    }
+
+    .submit-btn {
+        cursor: pointer;
+    }
+	.valid{
+		color: blue;
+	}
+	.invalid{
+		color: red;
+	}
+	#auth{
+		margin-top: 10px;
+	}
+
+</style>
+</head>
+<body>
+	<th:block th:include="common/header"></th:block>
+	<section class="section searhId">
+		<div class="search-wrap">
+			<div class="input-wrap">
+				<div class="input-title">
+					<label name="searhName">이름 </label>
+				</div>
+				<div class="input-warp">
+					<input type="text" name="memberName" id="memberName">
+				</div>
+			</div>
+			<div class="input-wrap">
+				<div class="input-title">
+					<label name="memberPhone">전화번호</label>
+				</div>
+				<div class="input-warp">
+					<input type="text" name="memberPhone" id="memberPhone" placeholder="010-0000-0000" maxlength="13" >
+				</div>
+			</div>
+			<div class="input-wrap">
+				<div class="input-title">
+					<label name="memberEmail">이메일 주소</label>
+				</div>
+				<div class="input-warp">
+					<input type="text" name="memberEmail" id="memberEmail" placeholder="가입시 입력한 이메일 입력">
+					<button type="button" class="submit-btn searchBtn">인증요청</button>
+				       	<div id="auth" class="input-item" style="display:none">
+							<input type ="text" id="authCode" placeHolder="인증번호입력">
+							<button class="submit-btn sendId" id="authBtn">인증하기</button>
+						</div>		                     
+					<span id="timeZone"></span>
+					<span id="authMsg"></span>
+				</div>
+				<span class="email-check-msg"></span>
+			</div>
+			<a href="/member/loginFrm" class="none" style="display: none">로그인페이지로 이동</a>
+		</div>
+	</section>
+	<script>
+	
+	let mailCode = null;
+	$(".sendId").on("click", function(){
+		const authCode = $("#authCode").val(); 
+    	const memberName = $("#memberName").val();
+    	const memberPhone = $("#memberPhone").val();
+    	const memberEmail = $("#memberEmail").val();
+		if(authCode == mailCode){
+
+			window.clearInterval(intervalId);
+			$("#memberEmail").prop("readonly",true);
+			$("#memberName").prop("readonly", true);
+			$("#memberPhone").prop("readonly", true);
+			$(".submit-btn").prop("disabled",true);
+			$("#authCode").prop("readonly",true);
+			$("#authBtn").prop("disabled",true);
+			$("#timeZone").remove();
+			$(".none").show();
+		      $.ajax({
+		            url: '/member/sendId', // 서버에서 인증 번호를 처리할 URL
+		            method: 'POST',
+		            data: {
+		            	memberName: memberName,
+		            	memberPhone: memberPhone,
+		            	memberEmail: memberEmail
+		            },
+		            success: function(data) {
+		            	const string = "회원님의 아이디는 ["+data+"]입니다.";
+		    			$("#authMsg").text(string);
+		    			$("#authMsg").css("color","blue");    	
+		            },
+		            error: function(error) {
+		                swal({
+		                    title: "오류",
+		                    text: "관리자에게 문의해주세요",
+		                    icon: "error"
+		                });
+		            }
+		        });
+		}else{
+			$("#authMsg").text("인증번호를 확인하세요.");
+			$("#authMsg").css("color","red");
+			
+		}
+	})
+	
+    $(".searchBtn").on("click", function(){
+    	const memberName = $("#memberName").val();
+    	const memberPhone = $("#memberPhone").val();
+    	const memberEmail = $("#memberEmail").val();
+    	  if (memberName === "" || memberPhone === "" || memberEmail === "") {
+    	        swal({
+    	            title: "입력값 확인",
+    	            text: "입력란을 채워주세요.",
+    	            icon: "warning"
+    	        });
+    	        return;
+    	 }
+    	const phonePattern = /^\d{3}-\d{4}-\d{4}$/;
+        if (!phonePattern.test(memberPhone)) {
+            swal({
+                text: "전화번호를 올바른 형식으로 입력해주세요.",
+                icon: "warning"
+            });
+            return;
+        }
+        // 이메일 유효성 검사
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isValidEmail = emailPattern.test(memberEmail);
+
+        // NAVER 이메일 도메인 체크
+        const isMail = memberEmail.endsWith('@naver.com');
+
+        // 이메일 형식과 도메인 검증
+        if (!isValidEmail) {
+            swal({
+                title: "유효하지 않은 이메일",
+                text: "유효한 이메일 주소를 입력해 주세요.",
+                icon: "warning"
+            });
+            return;
+        }
+
+        if (!isMail) {
+            swal({
+                title: "이메일 도메인 오류",
+                text: "NAVER 이메일 주소만 허용됩니다.",
+                icon: "warning"
+            });
+            return;
+        }
+
+        $.ajax({
+            url: '/member/searchId', // 서버에서 인증 번호를 처리할 URL
+            method: 'POST',
+            data: {
+            	memberName: memberName,
+            	memberPhone: memberPhone,
+            	memberEmail: memberEmail
+            },
+            success: function(data) {
+					console.log(data);
+				if(data == ""){
+	                swal({
+	                    title: "회원정보를 확인해주세요",
+	                    text: "가입된 회원정보가 없습니다.",
+	                    icon: "error"
+	                });			
+				}else{
+	             	mailCode = data;
+					$("#auth").show();
+					authTime();
+				}
+            },
+            error: function(error) {
+                swal({
+                    title: "오류",
+                    text: "관리자에게 문의해주세요",
+                    icon: "error"
+                });
+            }
+        });
+    	
+    });
+    
+    let intervelId = null;
+	function authTime(){
+		$("#timeZone").html("<span id='min'>3</span> : <span id='sec'>00</span>");
+		intervalId = window.setInterval(function(){
+			const min = $("#min").text();
+			const sec = $("#sec").text();
+			if(sec == "00"){
+				//0초 다음은 분을 내려야하므로
+				if(min == "0"){
+					window.clearInterval(intervalId);
+					mailCode = null;
+					$("#authMsg").text("인증시간이 만료되었습니다.");
+					$("#authMsg").css("color","red");
+				}else{
+					const newMin = Number(min) -1;
+					$("#min").text(newMin);
+					$("#sec").text(59);
+				}
+			}else{
+				//0초가 아니면 초를 내리면 됨
+				const newSec = Number(sec) -1;
+				if(newSec < 10){
+					$("#sec").text("0"+newSec);
+				}else{
+					$("#sec").text(newSec);
+				}
+			}
+		},1000);
+	}
+    $("#memberPhone").on("keyup", function() {
+        let input = $(this).val();
+        input = input.replace(/[^0-9]/g, '');
+       
+        if (input.length > 3 && input.charAt(3) !== '-') {
+        	input = input.slice(0, 3) + '-' + input.slice(3);
+        }
+        if (input.length > 8 && input.charAt(8) !== '-') {
+        	input = input.slice(0, 8) + '-' + input.slice(8);
+        }
+        $(this).val(input);
+        //console.log($("#memberBirth").val());
+    });
+    $("#memberEmail").on("input", function() {
+        const email = $("#memberEmail").val();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const isValidEmail = emailPattern.test(email);
+        //console.log(email);
+        // 이메일 도메인 체크 (gmail.com인지 확인)
+        const isGmail = email.endsWith('@naver.com');
+
+        if (isValidEmail && isGmail) {
+            $(".email-check-msg").text(""); 
+            $(".email-check-msg").removeClass("invalid").addClass("valid");
+            
+        } else if (isValidEmail) {
+            $(".email-check-msg").text("NAVER 이메일 주소만 허용됩니다.");
+            $(".email-check-msg").removeClass("valid").addClass("invalid");
+        } else {
+            $(".email-check-msg").text("유효한 이메일 주소를 입력해주세요.");
+            $(".email-check-msg").removeClass("valid").addClass("invalid");
+        }
+    });
+	</script>
+	<th:block th:include="common/footer"></th:block>
+</body>
+</html>

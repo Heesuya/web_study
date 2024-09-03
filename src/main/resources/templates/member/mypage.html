@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>mypage</title>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<style>
+
+
+.join-wrap {
+    max-width: 400px; /* 최대 너비 설정 */
+    width: 100%; /* 폭을 100%로 설정하여 화면 크기에 맞춤 */
+    padding: 20px;
+    border: 1px solid black;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 그림자 추가 */
+    box-sizing: border-box; /* 패딩 및 테두리 크기 포함 */
+    justify-content: center;
+    align-content: center;
+    margin: 30px auto;
+}
+
+@media (max-width: 500px) {
+    .join-wrap {
+        margin: 20px; /* 모바일에서의 여백 조정 */
+    }
+}
+
+.join-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {	
+    width: 100%; /* 폼 너비를 100%로 설정 */
+    margin-left: 30px;
+}
+.input-wrap > div{
+	float: left;
+}
+
+.input-wrap {
+	margin : 0 auto;
+	margin-right: 10px;
+	padding-top:20px;
+    overflow :hidden;
+    width: 100%; /* 전체 너비를 사용 */
+    max-width: 500px; /* 최대 너비 설정 */
+}
+
+.input-title {
+    width: 100px; /* 라벨 너비 설정 */
+}
+
+
+
+.input-msg {
+clear: both;
+    color: red;
+    margin-left: 100px; /* 메시지 위치 조정 */
+}
+
+.submit-btn {
+    background-color: var(--pointcolor);
+    height: 30px;
+    width: 100px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 15px;
+}
+
+.check-btn {
+    width: 50px;
+    height :15px;
+    background-color: var(--pointcolor);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.check-btn:hover {
+    background-color: #0056b3;
+}
+
+.input-addr {
+    width: 100%; /* 전체 너비를 사용 */
+    max-width: 500px; /* 최대 너비 설정 */
+}
+
+.input-item {
+    margin-bottom: 10px;
+    width: 100%; /* 전체 너비를 사용 */
+}
+.addr-wrap >div{
+	margin-bottom:10px;
+}
+.join-button-box{
+	text-align: center;
+	margin-right: 70px;
+}
+
+#postcode{	
+	width: 80px;
+}
+input{
+	border: none;
+	border-bottom: 1px solid var(--sub1);
+}
+.valid{
+	color: blue;
+}
+.invalid{
+	color: red;
+}
+.pix{
+	border: none;
+}
+
+
+
+</style>
+</head>
+<body>
+    <th:block th:include="common/header"></th:block>
+        <section class="section join">
+            <div class="join-wrap">
+                <div class="join-title">mypage</div>
+                <form action="/member/join" method="post" autocomplete="off">
+                    <div class="input-wrap">
+                        <div class="input-title">
+                            <label for="memberId">아이디</label>
+                        </div>
+                        <div class="join-item">
+                            <input type="text" class="pix" name="memberId" id="memberId" th:value="${session.member.memberId}" readonly>
+                        </div>
+                    </div>
+                    <div class="input-wrap">
+                        <div class="input-title">
+                            <label for="memberPw">비밀번호</label>
+                        </div>
+                        <div class="join-item">
+                            <input type="password" name="memberPw" id="memberPw" placeHolder="비밀번호를 입력하세요.">
+                        </div>
+                    </div>
+                
+                    <div class="input-wrap">
+                        <div class="input-title">
+                            <label for="memberName">이름</label>
+                        </div>
+                        <div class="join-item">
+                            <input type="text" class="pix"  name="memberName" id="memberName" th:value="${session.member.memberName}" readonly>
+                        </div>
+                    </div>
+                    <div class="input-wrap">
+                        <div class="input-title">
+                            <label for="memberEmail">이메일</label>
+                        </div>
+                        <div class="join-item">
+                            <input type="email" pattern=".+@gamil\.com" placeholder="example@naver.com" name="memberEmail" id="memberEmail" th:value="${session.member.memberEmail}"required>
+                           	<button type="button" class="check-btn email-check-btn">인증요청</button>
+                           	<div id="auth" class="input-item" style="display:none;">
+								<input type ="text" id="authCode" placeHolder="인증번호입력">
+								<button class="check-btn" id="authBtn">인증하기</button>
+							</div>		                     
+							<span id="timeZone"></span>
+							<span id="authMsg"></span>
+                        </div>
+                        <p class="input-msg email-check-msg"></p>
+                    </div>
+                    <div class="input-wrap">
+                        <div class="input-title">
+                            <label for="memberPhone">휴대번호</label>
+                        </div>
+                        <div class="join-item">
+                            <input type="text" name="memberPhone" id="memberPhone" maxlength="13" placeholder="010-0000-0000" th:value="${session.member.memberPhone}">
+                        </div>
+                    </div>
+                    <div class="input-wrap">
+                        <div class="input-title">
+                            <label for="memberBirth">생일</label>
+                        </div>
+                        <div class="join-item">
+                            <input type="text" name="memberBirth" id="memberBirth" th:value="${session.member.memberBirth}">
+                        </div>
+                    </div>
+                    <div class="input-wrap">
+                        <div class="input-title">
+                            <label for="postcode">주소</label>
+                        </div>
+						<div class="join-item">
+							<div class="addr-wrap">
+								<div class="detail-address-post">
+									<input type="text" name="memberAddr1" id="memberAddr1" placeholder="우편번호" th:value="${session.member.memberAddr1}"readonly>
+									<button type="button" class="check-btn" id="searchBtn">주소찾기</button>
+								</div>
+								<div class="detail-address-wrap">
+									<input type="text" name="memberAddr2" id="memberAddr2" placeholder="주소찾기를 입력해주세요" th:value="${session.member.memberAddr2}" readonly>
+								</div>
+								<div class="detail-address-wrap">
+									<input type="text" name="memberAddr3" id="memberAddr3" th:value="${session.member.memberAddr3}" placeholder="상세주소입력">
+								</div>								
+							</div>
+                    	</div>			
+
+					</div>
+
+                <div class="join-button-box">
+					<button type="submit" class="submit-btn" onclick="return checkValue();">변경하기</button>
+				</div>
+                </form>
+            </div>
+        </section>
+        <script>
+		$("#searchBtn").on("click",function(){
+		    new daum.Postcode({
+		        oncomplete: function(data) {
+		            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+		            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+		            //console.log(data);
+		            $("#memberAddr1").val(data.zonecode);
+		            $("#memberAddr2").val(data.roadAddress);
+		            $("#memberAddr3").val("");
+		            $("#memberAddr3").focus(); //커서가 자동으로 들어감
+		        }
+		    }).open();
+		});  
+		</script>
+    <th:block th:include="common/footer"></th:block>
+   </body> 
+</html>
