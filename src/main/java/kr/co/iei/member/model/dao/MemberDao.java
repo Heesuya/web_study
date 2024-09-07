@@ -15,5 +15,10 @@ public interface MemberDao {
 
 	MemberDTO searchId(MemberDTO member);
 
+	int searchMember(MemberDTO member);
+
+	int updatePw(MemberDTO member);
+
+
 
 }

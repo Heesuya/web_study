@@ -151,3 +151,9 @@ font-size: 13px;
 .check-btn:hover {
     background-color: #0056b3;
 }
+.search-title{
+	text-align: center;
+	padding:10px;
+	font-size: 20px;
+	margin-bottom: 10px;
+}

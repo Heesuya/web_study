@@ -17,10 +17,24 @@
 		#{memberAddr2},#{memberAddr3},sysdate,2,null)
 	</insert>
 	<select id="selecetOneMember" resultType="member">
-	select * from member_tbl where member_id=#{memberId}
+	select 
+		member_id,
+		member_name,
+		member_phone,
+		member_email,
+		member_birth,
+		member_addr1,
+		member_addr2,
+		member_addr3
+	from member_tbl where member_id=#{memberId}
 	</select>
 	<select id="searchId" resultType="member">
 	select member_id from member_tbl where member_name=#{memberName} and member_phone=#{memberPhone} and member_email=#{memberEmail}
 	</select>
-
+	<select id="searchMember" resultType="int">
+	select count(*) from member_tbl where member_id=#{memberId} and member_phone=#{memberPhone} and member_email=#{memberEmail}
+	</select>
+	<update id="updatePw">
+	update member_tbl set member_pw=#{memberPw} where member_id=#{memberId}
+	</update>
 </mapper>

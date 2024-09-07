@@ -1,5 +1,6 @@
 package kr.co.iei.member.controller;
 
+import java.io.Console;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import kr.co.iei.util.EmailSender;
 @RequestMapping(value="/member")
 public class MemberController {
 	@Autowired
-	private MemberService memberServcie;
+	private MemberService memberService;
 	@Autowired
 	private EmailSender emailSender;
 	
@@ -34,7 +35,7 @@ public class MemberController {
 	@ResponseBody
 	@GetMapping(value="/checkId")
 	public int checkId(MemberDTO member) {
-		int result = memberServcie.check(member);
+		int result = memberService.check(member);
 		return result;
 	}
 	
@@ -42,7 +43,7 @@ public class MemberController {
 	@PostMapping(value="/join")
 	public String insertMember(MemberDTO member, Model model) {
 		System.out.println(member);
-		int result = memberServcie.insertMember(member);
+		int result = memberService.insertMember(member);
 		if(result >0) {
 			return "redirect:/";
 		}else {
@@ -58,7 +59,7 @@ public class MemberController {
 	@ResponseBody
 	@GetMapping(value="/checkEmail")
 	public int checkEamil(MemberDTO member) {
-		int result = memberServcie.check(member);
+		int result = memberService.check(member);
 		return result;
 		
 	}
@@ -106,7 +107,7 @@ public class MemberController {
 	//로그인 page 아이디+비밀번호 확인  
 	@PostMapping(value="/login")
 	public String login(MemberDTO member, Model model, HttpSession session ) {
-		MemberDTO m = memberServcie.selectOneMember(member);
+		MemberDTO m = memberService.selectOneMember(member);
 		if(m != null) {
 			session.setAttribute("member", m);
 			return "redirect:/";
@@ -133,7 +134,7 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping(value = "/searchId")
 	public String searchId(MemberDTO member) {
-		MemberDTO m = memberServcie.searchId(member);
+		MemberDTO m = memberService.searchId(member);
 		if(m == null) {
 			return null;
 		}else{
@@ -168,11 +169,53 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping(value = "/sendId")
 	public String sendId(MemberDTO member) {
-		MemberDTO m = memberServcie.searchId(member);
+		MemberDTO m = memberService.searchId(member);
 		return m.getMemberId();
 	}
 	@GetMapping(value = "/mypage")
 	public String mypage() {
 		return "/member/mypage";
+	}
+	@GetMapping(value ="/searchPwFrm")
+	public String searchPwFrm() {
+		return "/member/searchPwFrm";
+	}
+	@ResponseBody
+	@PostMapping(value ="/searchMember")
+	public String searchMember(MemberDTO member) {
+		int result  = memberService.searchMember(member);
+		if(result == 1) {
+			String emailTitle ="비밀번호 재발급 인증 번호입니다.";
+			Random r = new Random();
+			StringBuffer sb = new StringBuffer();
+			for(int i = 0; i < 6; i++) {
+				int flag = r.nextInt(3);
+				if(flag == 0) {
+					int randomCode = r.nextInt(10);
+					sb.append(randomCode);
+				}else if(flag == 1) {
+					char randomCode = (char)(r.nextInt(26)+65);
+					sb.append(randomCode);
+				}else if(flag == 2) {
+					char randomCode = (char)(r.nextInt(26)+97);
+					sb.append(randomCode);
+				}
+			}	
+			String emailContent = "<h1>안녕하세요 . table 입니다.</h1>"
+					+"<h3>인증번호는 [<span style='color:red;'>"
+					+sb.toString()
+					+"</span>]입니다.</h3>";
+			emailSender.sendMail(emailTitle, member.getMemberEmail(), emailContent);
+			return sb.toString();	
+			
+		}
+		return "";
+	}
+	@ResponseBody
+	@PostMapping(value = "/updatePw")
+	public int updatePw(MemberDTO member) {
+		System.out.println(member);
+		int result = memberService.updatePw(member);
+		return result;
 	}
 }

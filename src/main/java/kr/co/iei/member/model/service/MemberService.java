@@ -45,6 +45,20 @@ public class MemberService {
 		MemberDTO m = memberDao.searchId(member);
 		return m;
 	}
-
-
+	
+	public int searchMember(MemberDTO member) {
+		int result = memberDao.searchMember(member);
+		return result;
+	}
+	public int updatePw(MemberDTO member) {
+		MemberDTO m = memberDao.selecetOneMember(member);
+		if(encoder.matches(member.getMemberPw(), m.getMemberPw())) {
+			return -1;
+		}else {
+			String encPw = encoder.encode(member.getMemberPw());
+			member.setMemberPw(encPw);
+			return memberDao.updatePw(member);
+		}
+		
+	}
 }

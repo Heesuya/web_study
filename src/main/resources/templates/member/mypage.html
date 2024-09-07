@@ -185,7 +185,7 @@ input{
                             <label for="memberBirth">생일</label>
                         </div>
                         <div class="join-item">
-                            <input type="text" name="memberBirth" id="memberBirth" th:value="${session.member.memberBirth}">
+                            <input type="text" class="pix" name="memberBirth" id="memberBirth" th:value="${session.member.memberBirth}" readonly>
                         </div>
                     </div>
                     <div class="input-wrap">
@@ -216,6 +216,85 @@ input{
             </div>
         </section>
         <script>
+        
+        let mailCode = null;
+        $(".email-check-btn").on("click", function(){
+        	const isValidEmail = $(".email-check-msg").hasClass("valid");
+            const memberEmail = $("#memberEmail").val();
+            if (isValidEmail) {
+                $.ajax({
+                    url: "/member/sendCode",
+                    type: "post",
+                    data: { memberEmail : memberEmail },
+                    success: function(data) {
+                    	mailCode = data;
+    					$("#auth").show();
+    					authTime();
+                    },
+                    error: function() {
+                        // 에러 발생 시 처리 로직
+                        alert("인증번호 발송에 실패했습니다.");
+                    }
+                });
+            }else{
+    			swal({
+                    title:"이메일을 확인해주세요",
+                    text : "입력값이 올바르지 않습니다.",
+                    icon : "warning"
+                });
+            }    
+        });
+        let intervelId = null;
+    	function authTime(){
+    		$("#timeZone").html("<span id='min'>3</span> : <span id='sec'>00</span>");
+    		intervalId = window.setInterval(function(){
+    			const min = $("#min").text();
+    			const sec = $("#sec").text();
+    			if(sec == "00"){
+    				//0초 다음은 분을 내려야하므로
+    				if(min == "0"){
+    					window.clearInterval(intervalId);
+    					mailCode = null;
+    					$("#authMsg").text("인증시간이 만료되었습니다.");
+    					$("#authMsg").css("color","red");
+    				}else{
+    					const newMin = Number(min) -1;
+    					$("#min").text(newMin);
+    					$("#sec").text(59);
+    				}
+    			}else{
+    				//0초가 아니면 초를 내리면 됨
+    				const newSec = Number(sec) -1;
+    				if(newSec < 10){
+    					$("#sec").text("0"+newSec);
+    				}else{
+    					$("#sec").text(newSec);
+    				}
+    			}
+    		},1000);
+    	}
+        
+        $("#memberEmail").on("input", function() {
+            const email = $("#memberEmail").val();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isValidEmail = emailPattern.test(email);
+            //console.log(email);
+            // 이메일 도메인 체크 (gmail.com인지 확인)
+            const isMail = email.endsWith('@naver.com');
+
+            if (isValidEmail && isMail) {
+                $(".email-check-msg").text(""); // 이메일이 유효하고 gmail.com인 경우 메시지 숨김
+                $(".email-check-msg").removeClass("invalid").addClass("valid");
+                
+            } else if (isValidEmail) {
+                $(".email-check-msg").text("NAVER 이메일 주소만 허용됩니다.");
+                $(".email-check-msg").removeClass("valid").addClass("invalid");
+            } else {
+                $(".email-check-msg").text("유효한 이메일 주소를 입력해주세요.");
+                $(".email-check-msg").removeClass("valid").addClass("invalid");
+            }
+        });
+        
 		$("#searchBtn").on("click",function(){
 		    new daum.Postcode({
 		        oncomplete: function(data) {

@@ -132,7 +132,6 @@ input{
                         </div>
                         <div class="join-item">
                             <input type="text" name="memberId" id="memberId">
-                        	<button type="button" class="check-btn id-check-btn">중복체크</button>
                         </div>
                     <p class="input-msg id-check-msg"></p>
                     </div>
@@ -166,7 +165,7 @@ input{
                             <label for="memberEmail">이메일</label>
                         </div>
                         <div class="join-item">
-                            <input type="email" pattern=".+@gamil\.com" placeholder="example@naver.com" name="memberEmail" id="memberEmail" required>
+                            <input type="email" pattern=".+@gamil\.com" placeholder="example@naver.com" name="memberEmail" id="memberEmail">
                            	<button type="button" class="check-btn email-check-btn">인증요청</button>
                            	<div id="auth" class="input-item" style="display:none;">
 								<input type ="text" id="authCode" placeHolder="인증번호입력">
@@ -223,16 +222,20 @@ input{
     <script>
 	function checkValue(){
 		const valid = $(".valid");
-		const memberId = $("#memberId");
+		const memberId = $("#memberId").val();
 		const memberPhone = $("#memberPhone").val();
 		const memberAddr1 = $("#memberAddr1").val();
 		const memberAddr3 = $("#memberAddr3").val();
-		if(valid.length != 3 && memberId != "" && memberPhone != "" && memberAddr1 != "" && memberAddr3 !=""){
-			swal({
-                title:"입력값 확인",
-                text : "입력값이 올바르지 않습니다.",
-                icon : "warning"
-            });
+	    if (valid.length !== 3 || 
+	        memberId    === "" || 
+	        memberPhone === "" || 
+	        memberAddr1 === "" || 
+	        memberAddr3 === "") {
+	            swal({
+	                title: "입력값 확인",
+	                text: "입력값이 올바르지 않습니다.",
+	                icon: "warning"
+	            });
            return false;  //500에러 확인용
             
 		}
@@ -249,6 +252,7 @@ input{
                 data: { memberEmail : memberEmail },
                 success: function(data) {
                 	mailCode = data;
+                	console.log(mailCode);
 					$("#auth").show();
 					authTime();
                 },
@@ -301,7 +305,7 @@ input{
         const isValidEmail = emailPattern.test(email);
         //console.log(email);
         // 이메일 도메인 체크 (gmail.com인지 확인)
-        const isMmail = email.endsWith('@naver.com');
+        const isMail = email.endsWith('@naver.com');
 
         if (isValidEmail && isMail) {
             $(".email-check-msg").text(""); // 이메일이 유효하고 gmail.com인 경우 메시지 숨김
@@ -326,7 +330,7 @@ input{
 			$("#memberEmail").prop("readonly",true);
 			$(".email-check-btn").prop("disabled",true);
 			$("#authCode").prop("readonly",true);
-			$("#authBtn").prop("disabled",true);
+			$("#authBtn").remove();
 			$("#timeZone").remove();
 		}else{
 			$("#authMsg").text("인증번호를 확인하세요.");
@@ -348,6 +352,7 @@ input{
 			$(".pw-check-msg").addClass("invalid");
 		}
 	})
+	//비밀번호 정규 표현식 
 	
     $("#memberId").on("change",function(){ //keyup(데이터베이스조회를 계속한다) 보다 change(안정화 위해서, 조회수 줄여줌) 
 		$(".id-check-msg").removeClass("valid").removeClass("invalid"); //글씨색 클래스
