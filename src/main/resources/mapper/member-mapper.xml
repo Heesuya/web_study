@@ -16,16 +16,19 @@
 		#{memberPhone},#{memberEmail},#{memberBirth},#{memberAddr1},
 		#{memberAddr2},#{memberAddr3},sysdate,2,null)
 	</insert>
-	<select id="selecetOneMember" resultType="member">
+	<select id="selectOneMember" resultType="member">
 	select 
 		member_id,
+		member_pw,
 		member_name,
 		member_phone,
 		member_email,
+		to_char(member_birth, 'YYYY-MM-DD') as member_birth,
 		member_birth,
 		member_addr1,
 		member_addr2,
-		member_addr3
+		member_addr3,
+		member_level
 	from member_tbl where member_id=#{memberId}
 	</select>
 	<select id="searchId" resultType="member">
@@ -36,5 +39,20 @@
 	</select>
 	<update id="updatePw">
 	update member_tbl set member_pw=#{memberPw} where member_id=#{memberId}
+	</update>
+	<select id="checkEmail" resultType="member">
+		select member_id from member_tbl where member_email=#{memberEmail}
+	</select>
+	<update id="deleteMember">
+		update member_tbl set member_level=3 where member_id=#{memberId}
+	</update>
+	<update id="updateMember">
+		update member_tbl set 
+			member_email=#{memberEmail}, 
+			member_phone=#{memberPhone}, 
+			member_addr1=#{memberAddr1},
+			member_addr2=#{memberAddr2},
+			member_addr3=#{memberAddr3}
+		where member_id=#{memberId}
 	</update>
 </mapper>

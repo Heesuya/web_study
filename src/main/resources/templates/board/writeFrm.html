@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>글쓰기</title>
+</head>
+<body>
+	<script src="/summernote/summernote-lite.js"></script>
+	<script src="/summernote/lang/summernote-ko-KR.js"></script>
+	<link rel="stylesheet" href="/summernote/summernote-lite.css">
+	
+	<th:block th:include="common/header"></th:block>
+	<main class="section">
+		<form action="/board/write" method="post" enctype="nultipart/form-data">
+			<table>
+				<tr>
+					<th>제목</th>
+					<td>
+						<input type="text" name="boardTitle" id="boardTitle">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<textarea name="boardContent" id="boardContent"></textarea>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</main>
+	<script>
+	 $("#boardContent").summernote({
+		 height:500,
+		 lang : "ko-KR",
+		 disableResize : true,
+		 disableResizeEditor : true,
+		 resize : false,
+		 callbacks :{
+			 //사용자가 이미지를 올리면 동작할 함수 지정
+			 onImageUpload : function(files){//이미지 올리면 이렇게 행동 하면 되
+			     //이미지를 선택하면 해당 파일을 매개변수로 받음
+			     //이미지를 처리할 함수를 실행 -> 이때 매개변수로 첨부한 파일, 에디터객체를 전송
+				 uploadImage(files[0],this);
+			 }
+		 }
+	 });
+	</script>
+	<th:block th:include="common/footer"></th:block>
+	
+	
+</body>
+</html>

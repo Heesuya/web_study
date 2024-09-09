@@ -27,7 +27,7 @@ public class MemberService {
 		return result;
 	}
 	public MemberDTO selectOneMember(MemberDTO member) {
-		MemberDTO m = memberDao.selecetOneMember(member);
+		MemberDTO m = memberDao.selectOneMember(member);
 		if(m != null) {
 			//평문패스워드와 암호화 패스워드 일치하면 true 
 			if(encoder.matches(member.getMemberPw(), m.getMemberPw())) {
@@ -51,7 +51,7 @@ public class MemberService {
 		return result;
 	}
 	public int updatePw(MemberDTO member) {
-		MemberDTO m = memberDao.selecetOneMember(member);
+		MemberDTO m = memberDao.selectOneMember(member);
 		if(encoder.matches(member.getMemberPw(), m.getMemberPw())) {
 			return -1;
 		}else {
@@ -60,5 +60,24 @@ public class MemberService {
 			return memberDao.updatePw(member);
 		}
 		
+	}
+	public MemberDTO checkEmail(String memberEmail) {
+		MemberDTO member = memberDao.checkEmail(memberEmail);
+		return member;
+	}
+	@Transactional
+	public int deleteMember(String memberId) {
+		int result = memberDao.deleteMember(memberId);
+		return result;
+	}
+	@Transactional
+	public int updateMember(MemberDTO member) {
+		int result = memberDao.updateMember(member);
+		return result;
+	}
+	public MemberDTO updateOneMember(MemberDTO member) {
+		MemberDTO m = memberDao.selectOneMember(member);
+		m.setMemberPw(null);
+		return m;
 	}
 }

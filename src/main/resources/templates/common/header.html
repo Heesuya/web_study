@@ -14,8 +14,8 @@
       <div>
         <div class="nav">
           <ul>
-            <li>메뉴</li>
-            <li><a href="#">자유게시판</a></li>
+            <li><a href="/board/list?reqPage=1">자유게시판</a></li>
+         
           </ul>
         </div>
         <div class="logo">
@@ -27,8 +27,11 @@
           	    <li><a href="/member/loginFrm">로그인</a></li>
             	<li><a href="/member/joinFrm">회원가입</a></li>
             </th:block>
-            <th:block th:if="${session.member != null}">
-				<li><a href="/member/mypage" th:text="${session.member.memberName}"></a></li>
+            <th:block th:if="${session.member != null }">
+				<li>
+					<a th:if="${session.member.memberLevel == 1}" href="/member/mypage">관리자</a>
+					<a th:if="${session.member.memberLevel == 2}" th:text="${session.member.memberId}" href="/member/mypage"></a>
+				</li>
 				<li><a href="/member/logout">로그아웃</a></li>
 			</th:block>
           </ul>

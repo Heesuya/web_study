@@ -130,7 +130,7 @@ input{
         <section class="section join">
             <div class="join-wrap">
                 <div class="join-title">mypage</div>
-                <form action="/member/join" method="post" autocomplete="off">
+                <form action="/member/update" method="post" autocomplete="off">
                     <div class="input-wrap">
                         <div class="input-title">
                             <label for="memberId">아이디</label>
@@ -141,10 +141,10 @@ input{
                     </div>
                     <div class="input-wrap">
                         <div class="input-title">
-                            <label for="memberPw">비밀번호</label>
+                            <span>비밀번호</span>
                         </div>
                         <div class="join-item">
-                            <input type="password" name="memberPw" id="memberPw" placeHolder="비밀번호를 입력하세요.">
+                            <button type="button" id="memberPw">비밀번호 변경</button>
                         </div>
                     </div>
                 
@@ -161,11 +161,11 @@ input{
                             <label for="memberEmail">이메일</label>
                         </div>
                         <div class="join-item">
-                            <input type="email" pattern=".+@gamil\.com" placeholder="example@naver.com" name="memberEmail" id="memberEmail" th:value="${session.member.memberEmail}"required>
+                            <input type="email" placeholder="example@naver.com" name="memberEmail" id="memberEmail" th:value="${session.member.memberEmail}">
                            	<button type="button" class="check-btn email-check-btn">인증요청</button>
                            	<div id="auth" class="input-item" style="display:none;">
 								<input type ="text" id="authCode" placeHolder="인증번호입력">
-								<button class="check-btn" id="authBtn">인증하기</button>
+								<button type="button" class="check-btn" id="authBtn">인증하기</button>
 							</div>		                     
 							<span id="timeZone"></span>
 							<span id="authMsg"></span>
@@ -190,7 +190,7 @@ input{
                     </div>
                     <div class="input-wrap">
                         <div class="input-title">
-                            <label for="postcode">주소</label>
+                            <label>주소</label>
                         </div>
 						<div class="join-item">
 							<div class="addr-wrap">
@@ -211,40 +211,159 @@ input{
 
                 <div class="join-button-box">
 					<button type="submit" class="submit-btn" onclick="return checkValue();">변경하기</button>
+					<button type="button" class="submit-btn delBtn">탈퇴</button>
 				</div>
                 </form>
+                 <input type="hidden" id="loginMemberAddr1" th:value="${session.member.memberAddr1}" />
+                 <input type="hidden" id="loginMemberAddr3" th:value="${session.member.memberAddr3}" />
+                 <input type="hidden" id="loginMemberEmail" th:value="${session.member.memberEmail}" />
+                 <input type="hidden" id="loginMemberPhone" th:value="${session.member.memberPhone}" />
+                
             </div>
         </section>
         <script>
+        function checkValue(){
+        	const loginMemberEmail = $("#loginMemberEmail").val();
+            const newEmail = $("#memberEmail").val();
+            const loginMemberAddr1 = $("#loginMemberAddr1").val();
+            const memberAddr1 = $("#memberAddr1").val();
+            const loginMemberAddr3 = $("#loginMemberAddr3").val();
+            const memberAddr3 = $("#memberAddr3").val();
+            const loginMemberPhone = $("#loginMemberPhone").val();
+            const memberPhone = $("#memberPhone").val();
+
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isValidEmail = emailPattern.test(newEmail);
+            const isNaverEmail = newEmail.endsWith('@naver.com');
+
+ 
+            if (!isValidEmail || !isNaverEmail) {
+                $(".email-check-msg").text("유효한 NAVER 이메일 주소를 입력해주세요.");
+                $(".email-check-msg").removeClass("valid").addClass("invalid");
+                return false;
+            } else {
+                $(".email-check-msg").text("");
+                $(".email-check-msg").removeClass("invalid").addClass("valid");
+            }
+
+      
+            if ((loginMemberEmail === newEmail) 
+                && (loginMemberAddr1 === memberAddr1)
+                && (loginMemberAddr3 === memberAddr3) 
+                && (loginMemberPhone === memberPhone)) {
+                swal({
+                    title: "입력값 확인.",
+                    text: "변경된 정보가 없습니다.",
+                    icon: "warning"
+                });
+                return false;
+            }
+
+            return true;
+
+
+        }
+        
+        $(".delBtn").on("click", function(){
+    		swal({
+				title : "회원탈퇴",
+				text : "탈퇴 하시겠습니까?",
+				icon : "warning",
+				buttons :{
+						cancel :{
+						text : "취소",
+						value : false,
+						visible : true,
+						closeModal : true
+					},
+						confirm :{
+						text : "탈퇴하기",
+						value : true,
+						visible : true,
+						closeModal : true
+					}
+				}	
+			}).then(function(isConfirm){
+				if(isConfirm){
+				location.href="/member/delete"; //데이터를 안보내는 이유_세션에 저장된 값 꺼내면 됨
+				}
+				//console.log(isConfirm);
+			});
+        });
         
         let mailCode = null;
-        $(".email-check-btn").on("click", function(){
-        	const isValidEmail = $(".email-check-msg").hasClass("valid");
-            const memberEmail = $("#memberEmail").val();
-            if (isValidEmail) {
-                $.ajax({
-                    url: "/member/sendCode",
-                    type: "post",
-                    data: { memberEmail : memberEmail },
-                    success: function(data) {
-                    	mailCode = data;
-    					$("#auth").show();
-    					authTime();
-                    },
-                    error: function() {
-                        // 에러 발생 시 처리 로직
-                        alert("인증번호 발송에 실패했습니다.");
-                    }
+        $("#authBtn").on("click", function(){
+        	const authCodeVal = $("#authCode").val();
+        	if(authCodeVal === mailCode){
+        		 $("#auth").show();
+     			$("#authMsg").text("인증완료");
+    			$("#authMsg").css("color","blue");
+    			window.clearInterval(intervalId);
+    			$("#memberEmail").prop("readonly",true);
+    			$(".email-check-btn").prop("disabled",true);
+    			$("#authCode").prop("readonly",true);
+    			$("#authBtn").prop("disabled",true);
+    			$("#timeZone").remove();
+        	}else{
+                swal({
+                    title: "인증번호를 확인해주세요.",
+                    icon: "warning"
                 });
-            }else{
-    			swal({
-                    title:"이메일을 확인해주세요",
-                    text : "입력값이 올바르지 않습니다.",
-                    icon : "warning"
-                });
-            }    
+        	}
         });
-        let intervelId = null;
+        
+        $(".email-check-btn").on("click", function() {
+            const memberEmail = $("#memberEmail").val();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isValidEmail = emailPattern.test(memberEmail);
+            
+            if (isValidEmail && memberEmail.endsWith('@naver.com')) {
+                    $.ajax({
+                        url: "/member/checkEmail",
+                        type: "post",
+                        data: { memberEmail: memberEmail }, 
+                        success: function(data) {
+                            if (data === 0) { // 이메일이 중복X 
+                                $.ajax({
+                                    url: "/member/sendCode",
+                                    type: "post",
+                                    data: { memberEmail: memberEmail }, 
+                                    success: function(code) { 
+                                        mailCode = code; 
+                                        $("#auth").show();
+                                        authTime();
+                                        console.log(code);
+                                    },
+                                    error: function() {
+                                        alert("인증번호 발송에 실패했습니다.");
+                                    }
+                                });
+                            } else { // 기존 이메일 중복 
+                                swal({
+                                    title: "기존 이메일과 동일합니다.",
+                                    text: "이메일을 확인해주세요.",
+                                    icon: "warning"
+                                });
+                            }
+                        },
+                        error: function() {
+                            swal({
+                                title: "서버 에러",
+                                text: "관리자에게 문의해주세요.",
+                                icon: "warning"
+                            });
+                        }
+                    });
+            } else {
+                swal({
+                    title: "유효한 이메일 주소를 입력해주세요.",
+                    text: "형식이 올바르지 않습니다.",
+                    icon: "warning"
+                });
+            }
+        });
+        
+        let intervalId = null;
     	function authTime(){
     		$("#timeZone").html("<span id='min'>3</span> : <span id='sec'>00</span>");
     		intervalId = window.setInterval(function(){

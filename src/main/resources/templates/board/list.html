@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+.title{
+	text-align: center;
+	margin: 50px;
+}
+.writer-btn-wrap{
+	text-align: right;
+}
+.writer-btn{
+	width: 60px;
+	height: 30px;
+    cursor: pointer;
+}
+/* Flex container to handle image rows */
+.image-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping of items */
+    gap: 10px; /* Space between images */
+}
+
+/* Flex item for images */
+.img {
+    width: 140px;
+    height: 250px;
+    margin-bottom: 80px;
+    
+}
+
+/* Ensure images fit within their container */
+.img img {
+    width: 100%;
+  
+}
+.img div{
+	text-align: center;
+}
+
+/* Ensure each row contains up to 4 images */
+@media (min-width: 500px) {
+    .img {
+        flex: 1 1 calc(25% - 10px); /* 4 images per row */
+    }
+}
+.plus-btn{
+	text-align: right;
+}
+.plus-btn span{
+	cursor: pointer;
+}
+</style>
+</head>
+<body>
+    <th:block th:include="common/header"></th:block>
+    <section class="section">
+    	<div class="title">게시판</div>
+    	<div class="writer-btn-wrap">
+    	<a href="/board/writeFrm"><button class="writer-btn">글쓰기</button></a>
+    	</div>
+    	<div class="image-container">
+    		<div th:each="list : ${list}" class="img">
+    			<img th:src="@{/board/{img}(img=${list.boardImg})}" alt="Board Image">
+    			<div th:text="${list.boardTitle}"></div>
+    		</div>
+    	</div>
+    	<div class="plus-btn">
+    		<span class="material-icons plus">add_circle_outline</span>
+    	</div>
+    </section>	
+<script>
+   $(".plus").on("click", function(){
+	  console.log("낭어"); 
+   });
+</script>
+    <th:block th:include="common/footer"></th:block>
+</body>
+</html>

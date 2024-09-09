@@ -330,7 +330,7 @@ input{
 			$("#memberEmail").prop("readonly",true);
 			$(".email-check-btn").prop("disabled",true);
 			$("#authCode").prop("readonly",true);
-			$("#authBtn").remove();
+			$("#authBtn").prop("disabled",true);
 			$("#timeZone").remove();
 		}else{
 			$("#authMsg").text("인증번호를 확인하세요.");

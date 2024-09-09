@@ -109,8 +109,17 @@ public class MemberController {
 	public String login(MemberDTO member, Model model, HttpSession session ) {
 		MemberDTO m = memberService.selectOneMember(member);
 		if(m != null) {
-			session.setAttribute("member", m);
-			return "redirect:/";
+			if(m.getMemberLevel() == 3) {
+				model.addAttribute("title", "로그인 실패");
+				model.addAttribute("msg", "탈퇴 회원입니다.");
+				model.addAttribute("icon", "error");
+				model.addAttribute("loc", "/member/loginFrm");
+				return "common/msg";
+			}else {
+				session.setAttribute("member", m);
+				//System.out.println(m);
+				return "redirect:/";
+			}
 		}else {
 			model.addAttribute("title", "로그인 실패");
 			model.addAttribute("msg", "아이디 또는 비밀번호를 확인하세요");
@@ -214,8 +223,53 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping(value = "/updatePw")
 	public int updatePw(MemberDTO member) {
-		System.out.println(member);
+		//System.out.println(member);
 		int result = memberService.updatePw(member);
 		return result;
+	}
+	
+	@ResponseBody
+	@PostMapping(value = "/checkEmail")
+	public int checkEmail(String memberEmail) {
+		MemberDTO member = memberService.checkEmail(memberEmail);
+		if(member != null) {
+			return 1;
+		}else {
+			return 0;
+		}
+	}
+	@GetMapping(value = "/delete")
+	public String deleteMember(@SessionAttribute MemberDTO member, Model model, HttpSession session) {
+		int result = memberService.deleteMember(member.getMemberId());
+		if(result > 0) {
+			model.addAttribute("title", "탈퇴완료");
+			model.addAttribute("msg", "회원 탈퇴 되었습니다.");
+			model.addAttribute("icon", "success");
+			model.addAttribute("loc", "/");
+			session.invalidate();
+		}else {
+			model.addAttribute("title", "탈퇴실패");
+			model.addAttribute("msg", "서버 오류로 인해관리자에게 문의해주세요.");
+			model.addAttribute("icon", "error");
+			model.addAttribute("loc", "/member/mypage");
+		}
+		return "common/msg";
+	}
+	@PostMapping(value = "/update")
+	public String updateMember(MemberDTO member, Model model, HttpSession session) {
+		int result = memberService.updateMember(member);
+		if(result > 0) {
+			MemberDTO m = memberService.updateOneMember(member);
+			session.setAttribute("member", m);
+			model.addAttribute("msg","회원 정보가 수정되었습니다.");
+			model.addAttribute("icon", "success");
+			model.addAttribute("loc", "/member/mypage");
+		}else {
+			model.addAttribute("title", "수정실패");
+			model.addAttribute("msg", "서버 오류로 인해관리자에게 문의해주세요.");
+			model.addAttribute("icon", "error");
+			model.addAttribute("loc", "/member/mypage");	
+		}
+		return "common/msg";
 	}
 }

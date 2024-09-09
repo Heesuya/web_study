@@ -11,13 +11,19 @@ public interface MemberDao {
 
 	int insertMember(MemberDTO member);
 
-	MemberDTO selecetOneMember(MemberDTO member);
+	MemberDTO selectOneMember(MemberDTO member);
 
 	MemberDTO searchId(MemberDTO member);
 
 	int searchMember(MemberDTO member);
 
 	int updatePw(MemberDTO member);
+
+	MemberDTO checkEmail(String memberEmail);
+
+	int deleteMember(String memberId);
+
+	int updateMember(MemberDTO member);
 
 
 
