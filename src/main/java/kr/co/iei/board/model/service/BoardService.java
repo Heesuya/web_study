@@ -1,14 +1,14 @@
 package kr.co.iei.board.model.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.iei.board.model.dao.BoardDao;
 import kr.co.iei.board.model.dto.BoardDTO;
-import kr.co.iei.util.BoardList;
 
 @Service
 public class BoardService {
@@ -30,4 +30,16 @@ public class BoardService {
 					
 				return boardList;
 	}
+
+	@Transactional
+	public int insertBoard(BoardDTO board) {	
+		int result = boardDao.insertBoard(board);
+		return result;
+	}
+
+	public BoardDTO selectOneBoard(int boardNo) {
+		BoardDTO board = boardDao.selectOndeBoard(boardNo);
+		return board;
+	}
+
 }

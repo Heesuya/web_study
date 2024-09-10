@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<th:block th:include="common/header"></th:block>
+	<section class="section"> 
+	<table>
+    <tr>
+        <th>제목</th>
+        <td colspan="4" th:text="${board.boardTitle}"></td>
+    </tr>
+    <tr>
+        <th>작성자</th>
+        <td th:text="${board.memberId}"></td>
+        <th>조회수</th>
+        <td colspan="2" th:text="${board.readCount}"></td>
+    </tr>
+
+    <tr>
+        <td colspan="5">
+            <span th:utext="${board.boardContent}"></span>
+        </td>
+    </tr>
+</table>
+	</section>
+    <th:block th:include="common/footer"></th:block>	
+</body>
+</html>

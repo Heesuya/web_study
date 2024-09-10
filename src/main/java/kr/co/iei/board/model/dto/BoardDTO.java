@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Alias(value = "board")
 public class BoardDTO {
 	private int boardNo;
-	private int memberNo;
+	private String memberId;
 	private String boardTitle;
 	private String boardContent;
 	private int readCount;

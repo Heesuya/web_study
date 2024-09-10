@@ -16,14 +16,12 @@
 	height: 30px;
     cursor: pointer;
 }
-/* Flex container to handle image rows */
 .image-container {
     display: flex;
-    flex-wrap: wrap; /* Allow wrapping of items */
-    gap: 10px; /* Space between images */
+    flex-wrap: wrap;
+    gap: 10px; 
 }
 
-/* Flex item for images */
 .img {
     width: 140px;
     height: 250px;
@@ -31,7 +29,6 @@
     
 }
 
-/* Ensure images fit within their container */
 .img img {
     width: 100%;
   
@@ -40,7 +37,6 @@
 	text-align: center;
 }
 
-/* Ensure each row contains up to 4 images */
 @media (min-width: 500px) {
     .img {
         flex: 1 1 calc(25% - 10px); /* 4 images per row */
@@ -59,15 +55,18 @@
     <section class="section">
     	<div class="title">게시판</div>
     	<div class="writer-btn-wrap">
-    	<a href="/board/writeFrm"><button class="writer-btn">글쓰기</button></a>
+    	<a th:if="${session.member != null}" href="/board/writeFrm"><button class="writer-btn">글쓰기</button></a>
     	</div>
     	<div class="image-container">
     		<div th:each="list : ${list}" class="img">
     			<img th:src="@{/board/{img}(img=${list.boardImg})}" alt="Board Image">
-    			<div th:text="${list.boardTitle}"></div>
+    			<a th:href="@{/board/view(boardNo=${list.boardNo})}">
+    			<span th:text="${list.boardTitle}"></span>
+    			</a>
     		</div>
     	</div>
     	<div class="plus-btn">
+    		<a th:href="@{board/}"></a>
     		<span class="material-icons plus">add_circle_outline</span>
     	</div>
     </section>	

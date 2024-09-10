@@ -2,9 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="kr.co.iei.board.model.dao.BoardDao">
 	<select id="selectBoardList" resultType="board">
-		    select * from (select rownum as rnum, n.* from (select  * from board)n) where rnum between #{start} and #{end} 
+    select * from (select rownum as rnum, n.* from (select  * from board order by board_no desc)n)  where rnum between #{start} and #{end} 
 	</select>
 	<select id="selectBoardTotalCount" resultType="int">
 		select count(*) from board
+	</select>
+	<insert id="insertBoard">
+		insert into board values(board_seq.nextval,#{memberId},#{boardTitle},#{boardContent},0,to_char(sysdate,'YYYY-MM-DD'),#{boardImg})
+	</insert>
+	<select id="selectOndeBoard">
+		select * from board where board_no=#{boardNo}
 	</select>
 </mapper>
