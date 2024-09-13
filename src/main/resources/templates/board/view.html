@@ -3,29 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style>
+    table {
+    	margin : 40px auto;
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #f4f4f4;
+        text-align: left;
+    }
+
+    td {
+        background-color: #fff;
+    }
+
+    td[colspan="4"], td[colspan="5"] {
+        text-align: left;
+    }
+
+    span {
+        display: block;
+        padding: 10px;
+        height :500px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }
+
+    /* Header and Footer */
+    th:block[th\\:include] {
+        display: block;
+    }
+    .btn-wrap{
+    	text-align: center;
+    }
+    .btn {
+    width: 70px;
+    height :50px;
+    background-color: var(--pointcolor);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 18px;
+}
+
+</style>
 </head>
 <body>
 	<th:block th:include="common/header"></th:block>
 	<section class="section"> 
 	<table>
-    <tr>
-        <th>제목</th>
-        <td colspan="4" th:text="${board.boardTitle}"></td>
-    </tr>
-    <tr>
-        <th>작성자</th>
-        <td th:text="${board.memberId}"></td>
-        <th>조회수</th>
-        <td colspan="2" th:text="${board.readCount}"></td>
-    </tr>
-
-    <tr>
-        <td colspan="5">
-            <span th:utext="${board.boardContent}"></span>
-        </td>
-    </tr>
-</table>
+	    <tr>
+	        <th>제목</th>
+	        <td colspan="4" th:text="${board.boardTitle}"></td>
+	    </tr>
+	    <tr>
+	        <th>작성자</th>
+	        <td th:text="${board.memberId}"></td>
+	        <th>조회수</th>
+	        <td colspan="2" th:text="${board.readCount}"></td>
+	    </tr>
+	    <tr>
+	        <td colspan="5">
+	            <span class="conten" th:utext="${board.boardContent}"></span>
+	        </td>
+	    </tr>
+	</table>
+<div class="btn-wrap" th:if="${session.member.memberId == board.memberId}">		
+		<button type="button" class="btn update">수정</button>
+		<button type="button" class="btn del">삭제</button>
+	</div>
+	<input type="hidden" th:value=${board.boardNo} class="boardNo">
 	</section>
+	
+	<script>
+	const conten = $(".conten").text(); 
+	console.log(conten);
+	$(".update").on("click", function(){
+		const boardNo = $(".boardNo").val();
+		swal({
+            title:"게시글 수정",
+            text :"게시글을 수정하시겠습니까?",
+            icon :"info",
+            buttons:{
+                cancel:{
+                    text:"취소",
+                    value:false,
+                    visible:true,
+                    className:"btn-secondary",
+                    closeModal:true
+                },
+                confirm:{
+                    text:"확인",
+                    value:true,
+                    visible:true,
+                    className:"btn-point",
+                    closeModal:true
+                }
+            }
+        }).then(function(isConfirm){
+            if(isConfirm){
+                location.href="/board/updateFrm?boardNo="+boardNo;
+            }
+        });
+	});	
+	$(".del").on("click", function(){
+		const boardNo = $(".boardNo").val();
+		console.log(boardNo);
+		swal({
+            title:"게시글 삭제",
+            text :"게시글을 삭제하시겠습니까?",
+            icon :"info",
+            buttons:{
+                cancel:{
+                    text:"취소",
+                    value:false,
+                    visible:true,
+                    className:"btn-secondary",
+                    closeModal:true
+                },
+                confirm:{
+                    text:"확인",
+                    value:true,
+                    visible:true,
+                    className:"btn-point",
+                    closeModal:true
+                }
+            }
+        }).then(function(isConfirm){
+            if(isConfirm){
+                location.href="/board/delete?boardNo="+boardNo;
+            }
+        });
+	});	
+	</script>
     <th:block th:include="common/footer"></th:block>	
 </body>
 </html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>글쓰기</title>
+</head>
+<style>
+.section *{
+	margin: 0 auto;
+}
+#boardTitle{
+	width: 70%;
+	border: none;
+	border-bottom: 1px solid black; 
+}
+.btn-wrap{
+	text-align: center;
+	margin: 50px;
+}
+.btn {
+    width: 70px;
+    height :50px;
+    background-color: var(--pointcolor);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    font-size: 18px;
+}
+.innerTable{
+	width: 100%
+}
+.img-viewer  img{
+	width: 100%;
+}
+
+</style>
+<body>
+	<th:block th:include="common/header"></th:block>
+    <main class="section">
+        <form action="/board/update" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="memberId" th:value="${board.memberId}" >
+            <table >
+            	<tr>
+  					<td>
+							<div id="img-viewer">
+								<img th:src="@{/board/{filename}(filename=${board.boardImg})}" id="img-view" width="100px">
+							</div>
+            	    <td>
+            	    	<table class="innerTable" >
+		            	     <tr height="100px;">
+		                    <th width="30%">제목</th>
+		                    <td width="70%">
+		                        <input type="text" th:value="${board.boardTitle}" name="boardTitle" id="boardTitle">
+		                    </td>
+			                </tr>
+			                <tr height="70px;">
+			                	<th width="30%">썸네일 선택</th>
+			                	<td width="70%">
+			                		<input type="file"  name="boardThumb" id="boardThumb" accept=".jpg,.png,.jpeg" onchange="loadImg(this);">
+			                	</td>
+			                </tr>
+		            	</table>
+            	</tr>
+           		<tr>
+			         <td colspan="2">
+			               <textarea th:utext="${board.boardContent}" name="boardContent" id="boardContent"></textarea>
+			         </td>
+			    </tr>    
+            </table>
+            <div class="btn-wrap">
+            	<button type="submit" class="btn" onclick="return chckValue();">수정</button>
+            <a href="/board/list?reqPage=1"><button type="button" class="btn" >취소</button></a>
+            <input type="hidden" th:value="${board.boardNo}" name="boardNo">
+            </div>
+        </form>
+    </main>
+    <script>
+    function chckValue(){
+        const boardTitle = $("#boardTitle").val(); 
+        const boardContent = $("#boardContent").val(); 
+        const boardThumb = $("#boardThumb").val(); 
+		
+        if(boardTitle === "" || boardContent === "" ){
+            swal({
+                title: "입력값 확인",
+                text: "입력값이 올바르지 않습니다.",
+                icon: "warning"
+            });
+            return false; 
+        }
+    }
+        $(document).ready(function() {
+            $("#boardContent").summernote({
+                height: 500,
+                width:800,
+                lang: "ko-KR",
+                disableResize: true,
+                disableResizeEditor: true,
+                resize: false,
+                callbacks: {
+                    onImageUpload: function(files) {
+                        // 이미지를 처리할 함수를 실행
+                        uploadImage(files[0], this);
+                    }
+                }
+            });
+        });
+        function uploadImage(file, editor){
+   		 //업로드 결과로 업로드된 파일의 filepath를 받아옴
+   		 //받아온 filepath를 이용해서 editor화면에 표현
+   		 
+   		 //ajax로 파일 업로드
+   		 //<form>여할의 객체 생성
+   		 const form = new FormData();
+   		 form.append("upfile",file);
+   		 /*
+   		 <form>
+   		 	<input type="file" name="upfile">
+   		 </form>
+   		 */
+   		 
+   		 $.ajax({
+   			 url : "/board/wirteImage",
+   			 type : "post",
+   			 data : form,
+   			 processData : false,
+   			 contentType : false,
+   			 success : function(data){
+   				 console.log(data);
+   				 $(editor).summernote("insertImage",data);
+   			 },
+   			 error : function(){
+   				 console.log("에러");
+   			 }
+   		 });
+   	 }
+        function loadImg(obj){
+			if(obj.files.length != 0 && obj.files[0] != 0){
+				const reader = new FileReader();
+				reader.readAsDataURL(obj.files[0]);
+				reader.onload = function(e){
+					$("#img-view").attr("src",e.target.result);
+				}
+			}else{
+				$("#img-view").attr("src","");
+			}
+		}    
+    </script>
+    <th:block th:include="common/footer"></th:block>
+    
+</body>
+</html>

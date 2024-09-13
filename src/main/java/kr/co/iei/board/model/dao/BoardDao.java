@@ -18,4 +18,10 @@ public interface BoardDao {
 
 	BoardDTO selectOndeBoard(int boardNo);
 
+	int upBoardCount(int boardNo);
+
+	int deleteBaord(int boardNo);
+
+	int boardUpdate(BoardDTO board);
+
 }

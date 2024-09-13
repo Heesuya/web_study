@@ -13,4 +13,18 @@
 	<select id="selectOndeBoard">
 		select * from board where board_no=#{boardNo}
 	</select>
+	<update id="upBoardCount">
+		update board set read_count = read_count+1 where board_no=#{boardNo}
+	</update>
+	<delete id="deleteBaord">
+		delete from board where board_no=${boardNo}
+	</delete>
+	<update id="boardUpdate">
+		update board set 
+		board_title=#{boardTitle}, board_content=#{boardContent}
+		<if test="boardImg!=null">
+			,board_img = #{boardImg}
+		</if>
+		where board_no=#{boardNo}
+	</update>
 </mapper>

@@ -38,8 +38,25 @@ public class BoardService {
 	}
 
 	public BoardDTO selectOneBoard(int boardNo) {
+		int result = boardDao.upBoardCount(boardNo);
 		BoardDTO board = boardDao.selectOndeBoard(boardNo);
 		return board;
+	}
+	@Transactional
+	public int deleteBoard(int boardNo) {
+		int result = boardDao.deleteBaord(boardNo);
+		return result;
+	}
+
+	public BoardDTO update(int boardNo) {
+		BoardDTO board = boardDao.selectOndeBoard(boardNo);
+		return board;
+	}
+
+	@Transactional
+	public int boardUpdate(BoardDTO board) {
+		int result = boardDao.boardUpdate(board);
+		return result;
 	}
 
 }
